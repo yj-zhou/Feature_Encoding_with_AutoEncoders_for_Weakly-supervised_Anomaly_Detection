@@ -42,7 +42,6 @@ from sklearn.model_selection import train_test_split
 MAX_INT = np.iinfo(np.int32).max
 data_format = 0
 
-
 def auc(y_true, y_pred):
     ptas = tf.stack([binary_PTA(y_true,y_pred,k) for k in np.linspace(0, 1, 1000)],axis=0)
     pfas = tf.stack([binary_PFA(y_true,y_pred,k) for k in np.linspace(0, 1, 1000)],axis=0)
