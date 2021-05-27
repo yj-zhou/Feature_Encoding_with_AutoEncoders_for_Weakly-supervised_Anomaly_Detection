@@ -3,7 +3,7 @@
 ## Usage
 A simple example of running our proposed method is shown as follows.
 ```python
-python FEAWAD.py --network_depth=4 --runs=10 --known_outliers=30 --cont_rate=0.02 --data_format=0 --output=./results.csv --dataset=`cardio_normalization`
+python FEAWAD.py --network_depth=4 --runs=10 --known_outliers=30 --cont_rate=0.02 --data_format=0 --output=./results.csv
 ````
 See FEAWAD.py for more details about each argument used in this line of code.
 
