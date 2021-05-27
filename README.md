@@ -6,8 +6,9 @@ A simple example of running our proposed method is shown as follows.
 python FEAWAD.py --network_depth=4 --runs=10 --known_outliers=30 --cont_rate=0.02 --data_format=0 --output=./results.csv
 ````
 The meaning of the arguments are shown as follows:
-* network_depth: Depth of the network, available values are 1, 2 and 4.
-* batch_size: number of data samples in each batch.
+* network_depth: Depth of the network, available values are 1, 2 and 4, default 4.
+* batch_size: number of data samples in each batch, default 512.
+* 
 See FEAWAD.py for more details about each argument used in this line of code.
 
 The key packages and their versions used in our algorithm implementation are listed as follows
@@ -32,4 +33,3 @@ The datasets used in our paper are available at the "dataset" folder.
 
 ## Contact
 If you have any question, please email to Prof. Yingjie Zhou (email: yjzhou09@gmail.com) or Mr. Fanxing Liu (email: finwarrah@gmail.com).
-Any question please email yjzhou@scu.edu.cn or finwarrah@gmail.com.
