@@ -5,6 +5,9 @@ A simple example of running our proposed method is shown as follows.
 ```python
 python FEAWAD.py --network_depth=4 --runs=10 --known_outliers=30 --cont_rate=0.02 --data_format=0 --output=./results.csv
 ````
+The meaning of the arguments are shown as follows:
+* network_depth: Depth of the network, available values are 1, 2 and 4.
+* batch_size: number of data samples in each batch.
 See FEAWAD.py for more details about each argument used in this line of code.
 
 The key packages and their versions used in our algorithm implementation are listed as follows
@@ -23,3 +26,10 @@ The full paper can be found in IEEE Xplore or [arXiv](https://arxiv.org/abs/2105
 
 ## Datasets
 The datasets used in our paper are available at the "dataset" folder.
+
+## Citation
+> Yingjie Zhou, Xucheng Song, Yanru Zhang, Fanxing Liu, Ce Zhu and Lingqiao Liu. Feature Encoding with AutoEncoders for Weakly-supervised Anomaly Detection, IEEE Transactions on Neural Networks and Learning Systems, 2021.
+
+## Contact
+If you have any question, please email to Prof. Yingjie Zhou (email: yjzhou09@gmail.com) or Mr. Fanxing Liu (email: finwarrah@gmail.com).
+Any question please email yjzhou@scu.edu.cn or finwarrah@gmail.com.
