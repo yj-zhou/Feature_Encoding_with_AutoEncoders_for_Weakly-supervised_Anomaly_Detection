@@ -408,7 +408,7 @@ parser.add_argument("--runs", type=int, default = 10, help="how many times we re
 parser.add_argument("--known_outliers", type=int, default = 30, help="the number of labeled outliers available at hand")
 parser.add_argument("--cont_rate", type=float, default=0.02, help="the outlier contamination rate in the training data")
 parser.add_argument("--input_path", type=str, default='./dataset/', help="the path of the data sets")
-parser.add_argument("--data_set", type=str, default='arrhythmia_normalization', help="a list of data set names")
+parser.add_argument("--data_set", type=str, default='nslkdd_normalization', help="a list of data set names")
 parser.add_argument("--data_format", choices=['0','1'], default='0',  help="specify whether the input data is a csv (0) or libsvm (1) data format")
 parser.add_argument("--output", type=str, default='./proposed_devnet_auc_performance.csv', help="the output file path")
 parser.add_argument("--ramdn_seed", type=int, default=42, help="the random seed number")
