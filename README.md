@@ -3,7 +3,7 @@
 ## Usage
 A simple example of running our proposed method is shown as follows.
 ```python
-python FEAWAD.py --network_depth=4 --runs=10 --known_outliers=30 --cont_rate=0.02 --data_format=0 --output=./results.csv
+python FEAWAD.py --network_depth=4 --runs=10 --known_outliers=30 --cont_rate=0.02 --data_format=0 --output=./results.csv --data_set nslkdd_normalization
 ```
 The meaning of the parameters are shown as follows:
 * network_depth: the depth of the network architecture, 1, 2 and 4 available, 4 default.
@@ -14,12 +14,12 @@ The meaning of the parameters are shown as follows:
 * known_outliers: the number of labeled outliers available at hand, 30 default.
 * cont_rate: the outlier contamination rate in the training data, 0.02 default.
 * input_path: the path of the data sets, './dataset/' default.
-* data_set: file name of the dataset chosen, "arrhythmia_normalization" default.
+* data_set: file name of the dataset chosen, 'nslkdd_normalization' default.
 * data_format: specify whether the input data is a csv (0) or libsvm (1) data format, '0' and '1' available, '0' default.
 * output: the output file path, './proposed_devnet_auc_performance.csv' default.
 * ramdn_seed: the random seed number, 42 default.
 
-;See FEAWAD.py for more details about each argument used in this line of code.
+[comment]: <> (See FEAWAD.py for more details about each argument used in this line of code.)
 
 The key packages and their versions used in our algorithm implementation are listed as follows
 * python==3.6.12
