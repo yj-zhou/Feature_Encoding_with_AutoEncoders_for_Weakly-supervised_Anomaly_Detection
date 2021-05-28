@@ -3,7 +3,7 @@
 ## Usage
 A simple example of running our proposed method is shown as follows.
 ```python
-python FEAWAD.py --network_depth=4 --runs=10 --known_outliers=30 --cont_rate=0.02 --data_format=0 --output=./results.csv --data_set nslkdd_normalization
+python FEAWAD.py --network_depth=4 --runs=10 --known_outliers=30 --cont_rate=0.02 --data_format=0 --output=./results.csv --data_set nslkdd_normalization --data_dim 122
 ```
 The meaning of the parameters are shown as follows:
 * network_depth: the depth of the network architecture, 1, 2 and 4 available, 4 default.
