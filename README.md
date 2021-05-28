@@ -16,6 +16,7 @@ The meaning of the parameters are shown as follows:
 * input_path: the path of the data sets, './dataset/' default.
 * data_set: file name of the dataset chosen, 'nslkdd_normalization' default.
 * data_format: specify whether the input data is a csv (0) or libsvm (1) data format, '0' and '1' available, '0' default.
+* data_dim: the number of dims in each data sample, 122 default (the data dim of dataset nslkdd)
 * output: the output file path, './proposed_devnet_auc_performance.csv' default.
 * ramdn_seed: the random seed number, 42 default.
 
