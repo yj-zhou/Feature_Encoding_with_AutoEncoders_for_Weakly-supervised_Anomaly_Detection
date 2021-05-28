@@ -13,7 +13,7 @@ def get_data_from_svmlight_file(path):
     data = load_svmlight_file(path)
     return data[0], data[1]
 
-def dataLoading(path,byte_num):
+def dataLoading(path):
     # loading data
     x=[]
     labels=[]
@@ -21,9 +21,11 @@ def dataLoading(path,byte_num):
     with (open(path,'r')) as data_from:
         csv_reader=csv.reader(data_from)
         for i in csv_reader:
+            byte_num = len(i) - 2
             x.append(i[0:byte_num])
             labels.append(i[byte_num])
 
+    byte_num = len(x[0])
 
     for i in range(len(x)):
         for j in range(byte_num):
@@ -34,6 +36,7 @@ def dataLoading(path,byte_num):
     labels = np.array(labels)
 
     return x, labels;
+
 
 def aucPerformance(mse, labels):
     roc_auc = roc_auc_score(labels, mse)

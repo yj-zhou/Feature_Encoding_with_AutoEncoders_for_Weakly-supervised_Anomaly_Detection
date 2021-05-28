@@ -2,15 +2,13 @@
 """
 @author：Xucheng Song
 The algorithm was implemented using Python 3.6.12, Keras 2.3.1 and TensorFlow 1.13.1 based on the code (https://github.com/GuansongPang/deviation-network).
-
 The major contributions are summarized as follows. 
-This code adds a feature encoder to utilize three factors as the new representation for the input data, and feeds the represetation into the MLP based anomaly score generator.
-The anomaly score generator adds the reconstruction error to all the layers of MLP and output an anomaly score.
-The loss function of our proposed method is specially designed. 
-The feature encoder and the anomaly score generator are jointly optimized through a two stage training procedure. 
-Firstly, the feature encoder is pretrained with all unlabelled training samples. 
-Secondly, all unlabelled data and a few labeled anomalies are used to perform the end-to-end optimization for the entire network based on the pre-trained feature encoding module.
-More details can be found in our TNNLS paper as follow.
+
+This code adds a feature encoder to encode the input data and utilizes three factors, hidden representation, reconstruction residual vector,
+and reconstruction error, as the new representation for the input data. The representation is then fed into an MLP based anomaly score generator,
+similar to the code (https://github.com/GuansongPang/deviation-network), but with a twist, i.e., the reconstruction error is fed to each layer
+of the MLP in the anomaly score generator. A different loss function in the anomaly score generator is also included. Additionally,
+the pre-training procedure is adopted in the training process. More details can be found in our TNNLS paper as follows.
 
 Yingjie Zhou, Xucheng Song, Yanru Zhang, Fanxing Liu, Ce Zhu and Lingqiao Liu,
 Feature Encoding with AutoEncoders for Weakly-supervised Anomaly Detection,
@@ -42,31 +40,6 @@ from sklearn.model_selection import train_test_split
 MAX_INT = np.iinfo(np.int32).max
 data_format = 0
 
-def auc(y_true, y_pred):
-    ptas = tf.stack([binary_PTA(y_true,y_pred,k) for k in np.linspace(0, 1, 1000)],axis=0)
-    pfas = tf.stack([binary_PFA(y_true,y_pred,k) for k in np.linspace(0, 1, 1000)],axis=0)
-    pfas = tf.concat([tf.ones((1,)) ,pfas],axis=0)
-    binSizes = -(pfas[1:]-pfas[:-1])
-    s = ptas*binSizes
-    return -K.sum(s, axis=0)
-
-def binary_PFA(y_true, y_pred, threshold=K.variable(value=0.5)):
-    y_pred = K.cast(y_pred >= threshold, 'float32')
-
-    N = K.sum(1 - y_true)
-
-    FP = K.sum(y_pred - y_pred * y_true)
-    return FP/N
-
-def binary_PTA(y_true, y_pred, threshold=K.variable(value=0.5)):
-    y_pred = K.cast(y_pred >= threshold, 'float32')
-
-    P = K.sum(y_true)
-
-    TP = K.sum(y_pred * y_true)
-    return TP/P
-
-aa = np.array([])
 
 def auto_encoder(input_shape):
     x_input = Input(shape=input_shape)
@@ -313,7 +286,6 @@ def inject_noise(seed, n_out, random_seed):
 
 def run_devnet(args):
     names = args.data_set.split(',')
-    names = ['arrhythmia_normalization']
     network_depth = int(args.network_depth)
     random_seed = args.ramdn_seed
     for nm in names:
@@ -324,16 +296,14 @@ def run_devnet(args):
         global data_format
         data_format = int(args.data_format)
         if data_format == 0:
-            x, labels = dataLoading(args.input_path + filename + ".csv",byte_num = 279)
+            x, labels = dataLoading(args.input_path + filename + ".csv")
         else:
             x, labels = get_data_from_svmlight_file(args.input_path + filename + ".svm")
             x = x.tocsr()    
         outlier_indices = np.where(labels == 1)[0]
         outliers = x[outlier_indices]
         n_outliers_org = outliers.shape[0]
-        
-        train_time = 0
-        test_time = 0
+
         for i in np.arange(runs): 
             train_x, test_x, train_label, test_label = train_test_split(x, labels, test_size=0.2, random_state=42, stratify = labels)
 
@@ -390,19 +360,28 @@ def run_devnet(args):
             batch_size = args.batch_size    
             nb_batch = args.nb_batch  
 
-            AEmodel_name = "./AE_model/auto_encoder_arrhythmia_normalization"+".h5"
+            AEmodel = deviation_network(input_shape,2,None,0)  #auto encoder model 预训练
+            print('pre-training start....')
+            print(AEmodel.summary())
+            AEmodel_name = "auto_encoder_normalization"+".h5"
+            ae_checkpointer = ModelCheckpoint(AEmodel_name, monitor='loss', verbose=0,
+                                           save_best_only = True, save_weights_only = True)            
+            AEmodel.fit_generator(auto_encoder_batch_generator_sup(train_x, inlier_indices, batch_size, nb_batch, rng),
+                                             steps_per_epoch = nb_batch,
+                                             epochs = 100,
+                                             callbacks=[ae_checkpointer])
 
-
+            print('load autoencoder model....')
             dev_model = deviation_network(input_shape, 4, AEmodel_name, 0)
-
-            dev_model_name = "./model/devnet_" + filename + "_" + str(args.cont_rate) + "cr_"  + str(args.batch_size) +"bs_" + str(args.known_outliers) + "ko_" + str(network_depth) +"d.h5"
+            print('end-to-end training start....')
+            dev_model_name = "./devnet_" + filename + "_" + str(args.cont_rate) + "cr_"  + str(args.batch_size) +"bs_" + str(args.known_outliers) + "ko_" + str(network_depth) +"d.h5"
             checkpointer = ModelCheckpoint(dev_model_name, monitor='loss', verbose=0,
                                            save_best_only = True, save_weights_only = True) 
             dev_model.fit_generator(batch_generator_sup(train_x, outlier_indices, inlier_indices, batch_size, nb_batch, rng),
                                           steps_per_epoch = nb_batch,
                                           epochs = epochs,
                                           callbacks=[checkpointer])
-
+            print('load model and print results....')
             scores = load_model_weight_predict(dev_model_name, input_shape, 4, test_x)
 
             rauc[i], ap[i] = aucPerformance(scores, test_label)     
@@ -426,10 +405,10 @@ parser.add_argument("--batch_size", type=int, default = 512, help = "batch size 
 parser.add_argument("--nb_batch", type=int, default =20,help="the number of batches per epoch")
 parser.add_argument("--epochs", type=int, default = 30, help="the number of epochs")
 parser.add_argument("--runs", type=int, default = 10, help="how many times we repeat the experiments to obtain the average performance")
-parser.add_argument("--known_outliers", type=int, default = 15, help="the number of labeled outliers available at hand")
+parser.add_argument("--known_outliers", type=int, default = 30, help="the number of labeled outliers available at hand")
 parser.add_argument("--cont_rate", type=float, default=0.02, help="the outlier contamination rate in the training data")
 parser.add_argument("--input_path", type=str, default='./dataset/', help="the path of the data sets")
-parser.add_argument("--data_set", type=str, default='arrhythmia_x_x', help="a list of data set names")
+parser.add_argument("--data_set", type=str, default='arrhythmia_normalization', help="a list of data set names")
 parser.add_argument("--data_format", choices=['0','1'], default='0',  help="specify whether the input data is a csv (0) or libsvm (1) data format")
 parser.add_argument("--output", type=str, default='./proposed_devnet_auc_performance.csv', help="the output file path")
 parser.add_argument("--ramdn_seed", type=int, default=42, help="the random seed number")
