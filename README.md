@@ -34,7 +34,7 @@ The key packages and their versions used in our algorithm implementation are lis
 See the full paper for the implemenation details of our proposed method.
 
 ## Full Paper
-The full paper can be found in IEEE Xplore or [arXiv](https://arxiv.org/abs/2105.10500)
+The full paper can be found in IEEE Xplore or [arXiv](https://arxiv.org/abs/2105.10500).
 
 ## Datasets
 The datasets used in our paper are available at the "dataset" folder.
