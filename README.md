@@ -11,7 +11,7 @@ The meaning of the parameters are shown as follows:
 * nb_batch: the number of batches per epoch, 20 default.
 * epochs: the number of epochs (in the end-to-end training stage), 30 default.
 * runs: how many times we repeat the experiments to obtain the average performance, 10 default.
-* known_outliers: the number of labeled outliers available at hand, 30 default.
+* known_outliers: the number of labeled outliers available at hand, 30 default (set to 15 for the dataset "arrhythmia"). 
 * cont_rate: the outlier contamination rate in the training data, 0.02 default.
 * input_path: the path of the data sets, './dataset/' default.
 * data_set: file name of the dataset chosen, 'nslkdd_normalization' default.
